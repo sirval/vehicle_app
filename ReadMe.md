@@ -64,7 +64,7 @@ To run the PHPUnit test provided in this app
 1. Run `php artisan test`
 2. if all are set, you will see about 15 passed test as seen in the screenshot below.
 
-<a href="https://raw.githubusercontent.com/sirval/vehicle_app/vehicle_app_api/main/public/test.png" target="_blank"><img src="https://raw.githubusercontent.com/sirval/vehicle_app/vehicle_app_api/main/public/test.png" /></a>
+<a href="https://raw.githubusercontent.com/sirval/vehicle_app/vehicle_app_api/public/files/test.png" target="_blank"><img src="https://raw.githubusercontent.com/sirval/vehicle_app/vehicle_app_api/public/files/test.png" /></a>
 
 
 
