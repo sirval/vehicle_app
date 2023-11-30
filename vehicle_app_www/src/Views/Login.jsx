@@ -1,13 +1,14 @@
-import React from "react"
+import React, { useContext } from "react"
 import { Link, useNavigate } from "react-router-dom"
 import axios from "axios";
 import { useFormik } from "formik";
 import * as Yup from 'yup';
 import "yup-phone";
 import Swal from 'sweetalert2'
+import { DataContext } from "../Utils/DataProvider";
 
 const Login = () => {
-
+    const {setIsLoggedIn} = useContext(DataContext);
     const navigate = useNavigate();
 
     const validationSchema = Yup.object({
@@ -25,8 +26,6 @@ const Login = () => {
         },
         validationSchema: validationSchema,
         onSubmit: (values) => {
-            console.log(values);
-           
             let formData = {
             phone: values.phone,
             password: values.password,
@@ -37,16 +36,14 @@ const Login = () => {
             data: formData,
             })
             .then((res) => {
-                console.log(res);
                 if (res.data.statusCode === 200 && res.data.status === 'success') {
                 //set token
-                console.log(res.data.data.authorization);
                 let authToken = res?.data?.data?.authorization?.token;
                 localStorage.removeItem("auth_token");
                 localStorage.removeItem("user");
                 localStorage.setItem("auth_token", authToken);
                 localStorage.setItem("user", JSON.stringify(res?.data?.data?.user));
-        
+                setIsLoggedIn(true);
                 navigate("/dashboard");
                 } else {
                     Swal.fire({  
@@ -57,7 +54,7 @@ const Login = () => {
                 }
             })
             .catch((err) => {
-                console.log(err);
+                console.error(err);
                 Swal.fire({  
                     icon: 'error',  
                     text: 'Oops! Something went wrong while trying to login. Please try again later',

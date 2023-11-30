@@ -1,4 +1,6 @@
 import { useContext, useState } from "react"
+
+import { Link, useNavigate } from "react-router-dom"
 import Navbar from "../components/Navbar"
 import VehicleDetail from "../components/VehicleDetail"
 import Searchbar from "../components/Searchbar"
@@ -13,11 +15,13 @@ import { isAuth } from "../Utils/Auth"
 import { DataContext } from "../Utils/DataProvider"
 
 function Dashboard() {
-  const { logout } = useContext(DataContext);
+  const { setIsLoggedIn, logout } = useContext(DataContext);
   const [vinData, setVinData] = useState({
     vin: "",
     specification: {}
   })
+
+  const navigate = useNavigate()
 
 
   // const [loading,setLoading] = useState(true)
@@ -35,8 +39,6 @@ function Dashboard() {
         },
         validationSchema: validationSchema,
         onSubmit: (values) => {
-            console.log(values);
-           
             let formData = {
             vin: values.vin,
             };
@@ -50,7 +52,6 @@ function Dashboard() {
             data: formData,
             })
             .then((res) => {
-                console.log(res);
                 if (res.data.statusCode === 200 && res.data.status === 'success') {
                   setVinData(res.data.data);
                 } else {
@@ -61,7 +62,7 @@ function Dashboard() {
                 }
             })
             .catch((err) => {
-                console.log(err);
+                console.error(err);
                 Swal.fire({  
                     icon: 'error',  
                     text: 'Oops! Something went wrong while trying to login. Please try again later',
@@ -69,6 +70,11 @@ function Dashboard() {
             });
         },
     });
+
+    const handleLogout = () => {
+      logout()
+      setIsLoggedIn(false);
+    }
  
   return (
     <div className={`${theme ? "bg-dark-navy-blue" : "bg-whitish-blue"} w-full min-h-screen flex flex-col justify-center items-center py-20`}>
@@ -76,7 +82,7 @@ function Dashboard() {
       dark = {theme}/> : <> */}
         <div className="w-11/12 xs:w-5/6 sm:w-110 600:w-100 lg:w-120 ">
           <Navbar 
-            onClick = {logout}
+            onClick = {handleLogout}
             dark = {theme}
           />
        </div>

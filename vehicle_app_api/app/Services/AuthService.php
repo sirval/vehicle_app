@@ -218,4 +218,5 @@ class AuthService
             return $this->response($th->getMessage(), 500, 'error', 'A server error occurred.');
         }
     }
+
 }
