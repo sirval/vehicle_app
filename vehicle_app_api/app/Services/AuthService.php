@@ -31,11 +31,15 @@ class AuthService
                 'password' => $request->password,
             ];
             $rules = [
-                'phone' => 'required|string',
+                'phone' => 'required|string|phone:INTERNATIONAL',
                 'password' => 'required|string',
             ];
+            $messages = [
+                'phone' => 'Phone number field is required and should be a valid phone number having your country dial code e.g +234 for Nigeria',
+                'password' => 'Password field is required and should not be less than 6 characters',
+            ];
 
-            $validator = Validator::make($data, $rules);
+            $validator = Validator::make($data, $rules, $messages);
             if ($validator->fails()) {
                 $errors = implode(' ', $validator->errors()->all());
                 return $this->response($errors, 409, 'error' ,$errors);
@@ -68,7 +72,7 @@ class AuthService
         }
     }
 
-    public function me()
+    public function me(): JsonResponse
     {
         return $this->response(new UserResource(Auth::user()));
     }
@@ -84,14 +88,14 @@ class AuthService
         return $this->response(null, 401, 'success', 'Successfully logged out');
     }
 
-    public function refresh()
+    public function refresh(): JsonResponse
     {
         $user = Auth::user();
         $token = Auth::refresh();
         return $this->response($this->tokenResponse($user, $token), 200, 'success', 'Token refreshed successfully');
     }
 
-    private function tokenResponse($user, $token)
+    private function tokenResponse($user, $token):array
     {
         $user = new UserResource($user);
         return [
@@ -104,7 +108,7 @@ class AuthService
         ];
     }
 
-    public function userRegister($request)
+    public function userRegister($request): JsonResponse
     {
         try {
             $data = [
@@ -114,11 +118,17 @@ class AuthService
             ];
             $rules = [
                 'name' => 'required|string|max:255',
-                'phone' => 'required|string|unique:users,phone',
+                'phone' => 'required|string|phone:INTERNATIONAL|unique:users,phone',
                 'password' => 'required|string|min:6',
             ];
 
-            $validator = Validator::make($data, $rules);
+            $messages = [
+                'name' => 'Name field is required',
+                'phone' => 'Phone number field is required and should be a valid phone number having your country dial code e.g +234 for Nigeria',
+                'password' => 'Password field is required and should not be less than 6 characters',
+            ];
+
+            $validator = Validator::make($data, $rules, $messages);
             if ($validator->fails()) {
                 $errors = implode(' ', $validator->errors()->all());
                 return $this->response($errors, 409, 'error' ,$errors);
@@ -144,7 +154,7 @@ class AuthService
         }
     }
 
-    public function verifyCode($request)
+    public function verifyCode($request): JsonResponse
     {
         try {
             $data = [
@@ -174,7 +184,13 @@ class AuthService
                 $verified_at = Carbon::parse(Carbon::now());
 
                 if ($verified_at->greaterThan($expires_at)) {
-                    return $this->response(null, 409, 'error', "Oops! The code has expired! A new code has been sent to your phone number {$this->maskPhoneNumber($user->phone)}");
+                    if ($verified_at->greaterThan($expires_at)) {
+                        if ($this->sendSms($user) === true) {
+                            return $this->response(null, 200, 'success', 'Oops! Code has already expired. Check your phone number for new verification code'); 
+                        }else{
+                            return $this->response(null, 200, 'success', 'Oops! Code has already expired. Seems sendchamp our sms engine is having issues! Use '.$user->verif_code.' for test purposes only'); 
+                        }
+                    }
                 }
 
                 $user->is_verified = Constants::IS_VERIFIED_USER;
@@ -189,7 +205,7 @@ class AuthService
         }
     }
 
-    public function resendSms($id)
+    public function resendSms($id): JsonResponse
     {
         try {
             
@@ -207,10 +223,7 @@ class AuthService
                 if ($this->sendSms($user) === true) {
                     return $this->response(null, 200, 'success', 'Check your phone number for verification code'); 
                 }else{
-                    $user->is_verified = Constants::IS_VERIFIED_USER;
-                    $user->phone_verified_at = Carbon::now();
-                    $user->save();
-                    return $this->response(null, 200, 'success', 'Seems our sms engine is having issues! We\'ve automatically verified!'); 
+                    return $this->response(null, 200, 'success', 'Seems sendchamp our sms engine is having issues! Use '.$user->verif_code.' for test purposes only'); 
                 }
             }
 
@@ -219,4 +232,97 @@ class AuthService
         }
     }
 
+    public function forgotPassword($request): JsonResponse
+    {
+        try {
+            $data = [
+                'phone' => $request->phone,
+            ];
+            $rules = [
+                'phone' => 'required|string|phone:INTERNATIONAL',
+            ];
+
+            $messages = [
+                'phone' => 'Phone number field is required and should be a valid phone number having your country dial code e.g +234 for Nigeria',
+            ];
+
+            $validator = Validator::make($data, $rules, $messages);
+            if ($validator->fails()) {
+                $errors = implode(' ', $validator->errors()->all());
+                return $this->response($errors, 409, 'error' ,$errors);
+            }
+           
+            $phone = $request->phone;
+            $user = $this->userModel->where('phone', $phone)->first();
+            if (!$user) {
+                return $this->response(null, 404, 'error', 'User with phone number not found!');
+            }
+            $new_code = $this->generateVerificationCode($user->phone);
+
+            $user->verif_code = $new_code;
+            $user->verif_expires_at = Carbon::now()->addMinutes(30);
+
+            if ($user->save()) {
+                $user->refresh();
+                if ($this->sendSms($user) === true) {
+                    return $this->response(null, 200, 'success', 'Check your phone number for verification code'); 
+                }else{
+                    return $this->response(null, 200, 'success', 'Seems sendchamp our sms engine is having issues! use '.$user->verif_code.' for test purposes only'); 
+                }
+            }
+            return $this->response(null, 409, 'error', 'Invalid Verification Code');
+        } catch (\Throwable $th) {
+            return $this->response($th->getMessage(), 500, 'error', 'A server error occurred.');
+        }
+    }
+
+    public function resetPassword($request): JsonResponse
+    {
+        try {
+            $data = [
+                'verify_code' => $request->verify_code,
+                'password' => $request->password,
+            ];
+            $rules = [
+                'verify_code' => 'required|string',
+                'password' => 'required|string|min:6',
+            ];
+
+            $validator = Validator::make($data, $rules);
+            if ($validator->fails()) {
+                $errors = implode(' ', $validator->errors()->all());
+                return $this->response($errors, 409, 'error' ,$errors);
+            }
+           
+            $code = $request->verify_code;
+            $user = $this->userModel->where('verif_code', $code)->first();
+            if (!$user) {
+                return $this->response(null, 404, 'error', 'User with code not found!');
+            }
+            if ($user->verif_code == $code) {
+                //check if code has expired
+                $expires_at = Carbon::parse($user->verif_expires_at);
+                $verified_at = Carbon::parse(Carbon::now());
+
+                if ($verified_at->greaterThan($expires_at)) {
+                    if ($this->sendSms($user) === true) {
+                        return $this->response(null, 200, 'success', 'Oops! Code has already expired. Check your phone number for new verification code'); 
+                    }else{
+                        return $this->response(null, 200, 'success', 'Oops! Code has already expired. Seems sendchamp our sms engine is having issues! Use '.$user->verif_code.' for test purposes only'); 
+                    }
+                }
+
+                $user->is_verified = Constants::IS_VERIFIED_USER;
+                $user->phone_verified_at = Carbon::now();
+                $user->password = Hash::make($request->password);
+                $user->verif_code = $this->generateVerificationCode($user->phone);
+                if ($user->save()) {
+                    return $this->response(null, 200, 'success', 'Password successfully changed! Proceed to Login');
+                }
+            }
+            return $this->response(null, 409, 'error', 'Invalid Verification Code');
+        } catch (\Throwable $th) {
+            return $this->response($th->getMessage(), 500, 'error', 'A server error occurred.');
+        }
+    }
 }

@@ -49,4 +49,14 @@ class AuthController extends Controller
     {
         return $this->authService->me();
     }
+
+    public function forgotPassword(Request $request): JsonResponse
+    {
+        return $this->authService->forgotPassword($request);
+    }
+
+    public function resetPassword(Request $request): JsonResponse
+    {
+        return $this->authService->resetPassword($request);
+    }
 }

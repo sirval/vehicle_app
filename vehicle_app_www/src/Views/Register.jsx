@@ -27,8 +27,6 @@ const Register = () => {
         },
         validationSchema: validationSchema,
         onSubmit: (values) => {
-            console.log(values);
-           
             let formData = {
                 phone: values.phone,
                 password: values.password,
