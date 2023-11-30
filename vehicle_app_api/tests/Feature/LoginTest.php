@@ -13,12 +13,6 @@ use Tests\TestCase;
 class LoginTest extends TestCase
 {
     use RefreshDatabase;
-    protected function setUp(): void
-    {
-        parent::setUp();
-        $this->artisan('migrate');
-        $this->seed();
-    }
 
     public function test_a_user_can_login_with_phone_number_and_password()
     {
