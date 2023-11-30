@@ -15,7 +15,7 @@ return new class extends Migration
         Schema::create('users', function (Blueprint $table) {
             $table->id();
             $table->string('name', 100);
-            $table->string('phone', 15)->unique();
+            $table->string('phone', 20)->unique();
             $table->string('verif_code', 10);
             $table->timestamp('verif_expires_at')->default(Carbon::now()->addMinutes(30));
             $table->boolean('is_verified')->default(0);

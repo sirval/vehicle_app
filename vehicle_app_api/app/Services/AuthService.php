@@ -55,7 +55,7 @@ class AuthService
             if (!$token) {
                 return $this->response(null, 401, 'error', 'Unauthorized');
             }
-            $user = User::find(Auth::id());
+            $user = $this->userModel->find(Auth::id());
             
             if ($user->is_verified == Constants::IS_NOT_VERIFIED_USER) {
                 Auth::logout();
@@ -70,7 +70,7 @@ class AuthService
 
     public function me()
     {
-        
+        return $this->response(new UserResource(Auth::user()));
     }
 
     /**
@@ -81,7 +81,7 @@ class AuthService
     public function logout()
     {
         Auth::logout();
-        return $this->response(null, 200, 'success', 'Successfully logged out');
+        return $this->response(null, 401, 'success', 'Successfully logged out');
     }
 
     public function refresh()
@@ -134,9 +134,9 @@ class AuthService
             ]);
 
             if ($this->sendSms($result) === true) {
-                return $this->response(null, 201, 'success', 'Check your phone number for verification code'); 
+                return $this->response(['user_id' => $result->id], 201, 'success', 'Check your phone number for verification code. If you didn\'t receive otp, use '.$result->verif_code.' for test purposes only'); 
             }else{
-                return $this->response(null, 201, 'success', 'We couldn\'t send you a verification code. If this persists, contact support'); 
+                return $this->response(['user_id' => $result->id], 201, 'success', 'We couldn\'t send you a verification code. If this persists, contact support'); 
             }
            
         } catch (\Throwable $th) {
@@ -161,7 +161,7 @@ class AuthService
             }
            
             $code = $request->verify_code;
-            $user = User::where('verif_code', $code)->first();
+            $user = $this->userModel->where('verif_code', $code)->first();
             if (!$user) {
                 return $this->response(null, 404, 'error', 'User with code not found!');
             }
@@ -193,7 +193,7 @@ class AuthService
     {
         try {
             
-            $user = User::find($id);
+            $user = $this->userModel->find($id);
             if (!$user) {
                 return $this->response(null, 404, 'error', 'User not found! Signup instead!');
             }

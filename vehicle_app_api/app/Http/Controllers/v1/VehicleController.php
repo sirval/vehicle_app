@@ -16,7 +16,6 @@ class VehicleController extends Controller
 
     public function getClientVin(Request $request)
     {
-        // return $request;
         return $this->vehicleService->getVehicleDetail($request);
     }
 }

@@ -27,6 +27,7 @@ Route::group(['prefix' => 'v1'], function () {
         Route::middleware(['auth:api'])->group(function () {
             Route::post('/logout', 'logout');
             Route::post('/refresh', 'refreshToken');
+            Route::get('/me', 'me');
         });
     });
 

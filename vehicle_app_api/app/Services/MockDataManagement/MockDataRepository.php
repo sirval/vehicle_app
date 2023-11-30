@@ -22,7 +22,7 @@ class MockDataRepository
             if ($validator->fails()) {
                 $errors = implode(' ', $validator->errors()->all());
                 return [
-                    'status' => 409,
+                    'statusCode' => 409,
                     'response' => $errors
                 ];
             }
@@ -31,7 +31,7 @@ class MockDataRepository
             if ($result) {
                 $result = new VehicleMockDataResource($result);
                 return [
-                    'status' => 200,
+                    'statusCode' => 200,
                     'response' => $result
                 ];
             }else {
