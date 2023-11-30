@@ -74,8 +74,9 @@ To run the PHPUnit test provided in this app
 2. Run `cd vehicle_app_www`
 3. Make sure you have `Node 18.x` or use `nvm list` to see available node versions.
     If you wish to switch, you can use `nvm use your_node_version`
-4. If all are set run `npm install` and then
-5 `npm run dev` your project should be served at `http://localhost:5173/`
+4. Run `cp .env.example .env`:
+6. If all are set run `npm install` and then
+7. `npm run dev` your project should be served at `http://localhost:5173/`
 
 
 - If you wish to find out more, shoot me a mail ohukaiv@gmail.com
