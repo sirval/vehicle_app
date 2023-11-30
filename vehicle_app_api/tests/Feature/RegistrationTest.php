@@ -18,19 +18,6 @@ class RegistrationTest extends TestCase
     public $sendSms;
     public $apiResponse;
     public $generateVerificationCode;
-    // protected function setUp(): void
-    // {
-    //     parent::setUp();
-    //     $this->apiResponse = $this->partialMock(ApiResponse::class, function(MockInterface $mock) {
-    //         $mock->shouldReceive('response')->andReturn([
-    //             'data', 'statusCode','status', 'response'
-    //         ]);
-    //     });
-
-    //     $this->sendSms = $this->partialMock(Utils::class, function(MockInterface $mock) {
-    //         $mock->shouldReceive('sendSms')->andReturn($user);
-    //     });
-    // }
     
     public function test_a_user_can_register()
     {

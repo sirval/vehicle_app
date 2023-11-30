@@ -4,8 +4,10 @@ namespace Tests\Feature;
 
 use App\Constants;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Support\Facades\Hash;
 use PHPOpenSourceSaver\JWTAuth\Facades\JWTAuth;
 use PHPOpenSourceSaver\JWTAuth\JWT;
 use Tests\TestCase;
@@ -16,7 +18,15 @@ class LoginTest extends TestCase
 
     public function test_a_user_can_login_with_phone_number_and_password()
     {
-        $user = User::factory()->create();
+        $data = [
+            'name' => 'John Doe',
+            'phone' => '+2349011111111',
+            'verif_code' => '111111',
+            'is_verified' => Constants::IS_VERIFIED_USER,
+            'verif_expires_at' =>  Carbon::now()->addMinutes(30),
+            'password' => Hash::make('password'),
+        ];
+        $user = User::create($data);
         $response = $this->postJson('api/v1/auth/login', [
             'phone' => $user->phone,
             'password' => 'password'

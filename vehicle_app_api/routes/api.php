@@ -39,7 +39,5 @@ Route::group(['prefix' => 'v1'], function () {
         });
     });
 
-    Route::controller(VehicleDataController::class)->prefix('mock-data')->group(function () {
-        Route::post('/verify-vin', 'getVin');
-    });
+
 });

@@ -4,15 +4,18 @@ namespace App\Http\Controllers\v1;
 
 use App\Http\Controllers\Controller;
 use App\Services\AuthService;
+use App\Services\VerificationService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 
 class AuthController extends Controller
 {
     protected $authService;
-    public function __construct(AuthService $authService)
+    protected $verifyService;
+    public function __construct(AuthService $authService, VerificationService $verifyService)
     {
         $this->authService = $authService;
+        $this->verifyService = $verifyService;
     }
 
     public function register(Request $request): JsonResponse
@@ -27,12 +30,12 @@ class AuthController extends Controller
 
     public function verifyCode(Request $request): JsonResponse
     {
-        return $this->authService->verifyCode($request);
+        return $this->verifyService->verifyCode($request);
     }
 
     public function resendCode($id): JsonResponse
     {
-        return $this->authService->resendSms($id);
+        return $this->verifyService->resendSms($id);
     }
 
     public function logout(): JsonResponse

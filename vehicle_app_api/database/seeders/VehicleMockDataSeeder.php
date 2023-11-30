@@ -129,7 +129,122 @@ class VehicleMockDataSeeder extends Seeder
                     "highway_mileage": "20 miles/gallon",
                     "city_mileage": "15 miles/gallon"
                   }'
-            ]
+            ],
+            [
+                'vin' => '1NXBR32E37Z890212',
+                'specification' => '{
+                    "vin": "1NXBR32E37Z890212",
+                    "year": "2007",
+                    "make": "TOYOTA",
+                    "model": "COROLLA",
+                    "trim_level": "LE",
+                    "engine": "1.8L L4 DOHC 16V",
+                    "style": "SEDAN 4-DR",
+                    "made_in": "JAPAN",
+                    "steering_type": "R&P",
+                    "anti_brake_system": "4-Wheel ABS",
+                    "tank_size": "13.20 gallon",
+                    "overall_height": "58.50 in.",
+                    "overall_length": "178.30 in.",
+                    "overall_width": "66.90 in.",
+                    "standard_seating": "5",
+                    "optional_seating": null,
+                    "highway_mileage": "38 miles/gallon",
+                    "city_mileage": "30 miles/gallon"
+                }'
+            ],
+            [
+                'vin' => 'WAUZZZ8E85A532147',
+                'specification' => '{
+                    "vin": "WAUZZZ8E85A532147",
+                    "year": "2005",
+                    "make": "AUDI",
+                    "model": "A4",
+                    "trim_level": "2.0T QUATTRO",
+                    "engine": "2.0L L4 DOHC 16V TURBO",
+                    "style": "SEDAN 4-DR",
+                    "made_in": "GERMANY",
+                    "steering_type": "R&P",
+                    "anti_brake_system": "4-Wheel ABS",
+                    "tank_size": "16.60 gallon",
+                    "overall_height": "56.20 in.",
+                    "overall_length": "180.60 in.",
+                    "overall_width": "70.30 in.",
+                    "standard_seating": "5",
+                    "optional_seating": null,
+                    "highway_mileage": "30 miles/gallon",
+                    "city_mileage": "21 miles/gallon"
+                }'
+            ],
+            [
+                'vin' => '1G2NF52E43M619209',
+                'specification' => '{
+                    "vin": "1G2NF52E43M619209",
+                    "year": "2003",
+                    "make": "PONTIAC",
+                    "model": "GRAND AM",
+                    "trim_level": "SE",
+                    "engine": "2.2L L4 DOHC 16V",
+                    "style": "COUPE 2-DR",
+                    "made_in": "UNITED STATES",
+                    "steering_type": "R&P",
+                    "anti_brake_system": "4-Wheel ABS",
+                    "tank_size": "14.30 gallon",
+                    "overall_height": "54.50 in.",
+                    "overall_length": "186.00 in.",
+                    "overall_width": "70.40 in.",
+                    "standard_seating": "5",
+                    "optional_seating": null,
+                    "highway_mileage": "30 miles/gallon",
+                    "city_mileage": "22 miles/gallon"
+                }'
+            ],
+            [
+                'vin' => 'JF1GD70625L515120',
+                'specification' => '{
+                    "vin": "JF1GD70625L515120",
+                    "year": "2005",
+                    "make": "SUBARU",
+                    "model": "IMPREZA",
+                    "trim_level": "WRX STI",
+                    "engine": "2.5L H4 DOHC 16V TURBO",
+                    "style": "SEDAN 4-DR",
+                    "made_in": "JAPAN",
+                    "steering_type": "R&P",
+                    "anti_brake_system": "4-Wheel ABS",
+                    "tank_size": "15.90 gallon",
+                    "overall_height": "58.30 in.",
+                    "overall_length": "175.80 in.",
+                    "overall_width": "68.50 in.",
+                    "standard_seating": "5",
+                    "optional_seating": null,
+                    "highway_mileage": "25 miles/gallon",
+                    "city_mileage": "18 miles/gallon"
+                }'
+            ],
+            [
+                'vin' => '5XXGN4A70EG343153',
+                'specification' => '{
+                    "vin": "5XXGN4A70EG343153",
+                    "year": "2014",
+                    "make": "KIA",
+                    "model": "OPTIMA",
+                    "trim_level": "LX",
+                    "engine": "2.4L L4 DOHC 16V",
+                    "style": "SEDAN 4-DR",
+                    "made_in": "UNITED STATES",
+                    "steering_type": "R&P",
+                    "anti_brake_system": "4-Wheel ABS",
+                    "tank_size": "18.50 gallon",
+                    "overall_height": "57.10 in.",
+                    "overall_length": "190.70 in.",
+                    "overall_width": "72.10 in.",
+                    "standard_seating": "5",
+                    "optional_seating": null,
+                    "highway_mileage": "34 miles/gallon",
+                    "city_mileage": "23 miles/gallon"
+                }'
+            ],
         ];
         foreach ($mockData as $data) {
             VehicleMockData::create([

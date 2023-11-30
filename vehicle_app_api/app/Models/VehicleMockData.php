@@ -9,7 +9,8 @@ class VehicleMockData extends Model
 {
     use HasFactory;
 
-    protected $casts = [
-        'subscription' => 'array'
-    ];
+    protected $table = 'vehicle_mock_data';
+
+    protected $fillable = ['vin', 'specification'];
+
 }
