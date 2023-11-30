@@ -33,7 +33,22 @@ export const DataProvider = ({ children }) => {
           }
         })
         .catch((err) => {
-          console.error(err);
+          if (err.response.status === 401) {
+            localStorage.removeItem("auth_token");
+            localStorage.removeItem("user");
+            setIsLoggedIn(false);
+            setUserDetail([]);
+           
+            Swal.fire({  
+              icon: 'error',  
+              text: "Unauthenticated. Please Login",
+            }); 
+            setTimeout(() => {
+              window.location.replace("login");
+            }, 2000);
+          }else{
+            console.error(err);
+          }
         });
     };
 
